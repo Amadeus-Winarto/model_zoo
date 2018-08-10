@@ -4,7 +4,7 @@ A list of Python Scripts that implement various model architectures in Keras
 # How To Use:
 ## InceptionV3:
 ```python
-import models
+from InceptionV3 import inceptionv3
 inception_in = Input(shape = (299, 299, 3)
 inception = inceptionv3(inception_in, ratio = 1, num_A = 3, num_B = 4, num_C = 2, num_class = 1000, lr = 1e-5
 ```
