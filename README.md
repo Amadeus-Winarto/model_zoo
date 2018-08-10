@@ -40,3 +40,7 @@ inception_in = Input(shape = (299, 299, 3)
 inception = inceptionv3(inception_in, ratio = 1, num_A = 3, num_B = 4, num_C = 2, num_class = 1000, lr = 1e-5
 ```
 link: https://arxiv.org/pdf/1512.00567.pdf
+
+## InceptionV4
+
+## Inception-ResNet
