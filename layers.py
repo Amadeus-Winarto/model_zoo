@@ -1,77 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Sep  4 11:27:28 2018
+Created on Fri Aug 31 22:03:24 2018
 
 @author: valaxw
 """
-from keras.models import Model
-from keras.layers import Dense, Activation, Add
-from keras.layers import Conv2D, BatchNormalization, GlobalAveragePooling2D
+from keras.layers import Activation, Add, Conv2D, BatchNormalization
 from keras.regularizers import l2
 
-def ResNet(model_input, depth, num_classes, lr, model_type = 'v2'): #ResNet Inspired Architecture
-    if model_type == 'v1':
-        block_depth = 2
-        filters = 64
-        
-        x = Conv2D(32, (3, 3), padding = 'same', kernel_initializer='he_normal', name='conv1')(model_input)
-        x = BatchNormalization(axis=3, name='bn_conv1')(x)
-        x = Activation('relu')(x)
-        
-        for i in range(depth):
-            block_name = 'a'
-            filter_list = [filters, filters, filters *4]
-            
-            x = resnetv1.conv_block(x, 3, filter_list , stage = block_depth, block = block_name, strides = (1, 1))
-            
-            if block_depth < 6:
-                block_depth += 1
-                
-            for i in range(block_depth-1):
-                block_name = chr(ord(block_name)+1)
-                
-                x = resnetv1.identity_block(x, 3, filter_list , stage = block_depth, block = block_name)
-            
-            if filters < 512:
-                filters = filters * 2
-    
-        x = GlobalAveragePooling2D(name='avg_pool')(x)
-        x = Dense(num_classes, activation='softmax', name='fc')(x)
-        
-        model = Model(model_input, x)        
-        return model
-    
-    elif model_type == 'v2':
-        block_depth = 2
-        filters = 64
-        
-        x = Conv2D(32, (3, 3), padding = 'same', kernel_initializer='he_normal', name='conv1')(model_input)
-        x = BatchNormalization(axis=3, name='bn_conv1')(x)
-        x = Activation('relu')(x)
-        
-        for i in range(depth):
-            block_name = 'a'                
-            filter_list = [filters, filters, filters *4]
-            
-            x = resnetv2.conv_block(x, 3, filter_list , stage = block_depth, block = block_name, strides = (1, 1))
-            
-            if block_depth < 6:
-                block_depth += 1
-                
-            for i in range(block_depth-1):
-                block_name = chr(ord(block_name)+1)
-                
-                x = resnetv2.identity_block(x, 3, filter_list , stage = block_depth, block = block_name)
-            
-            if filters < 512:
-                filters = filters * 2
-
-        x = GlobalAveragePooling2D(name='avg_pool')(x)
-        x = Dense(num_classes, activation='softmax', name='fc')(x)
-        
-        model = Model(model_input, x)        
-        return model
 
 class resnetv1:
     def conv_block(input_tensor, kernel_size, filters, stage, block, strides = (2,2)): 
@@ -160,3 +96,21 @@ class resnetv2():
         
         x = Add()([x, input_tensor])
         return x
+        
+def residual_block(input_tensor, depth, filters, stage):
+    conv_name_base = 'res' + str(stage) + '-0_branch'
+    x = Conv2D(filters, (3, 3), padding='same', kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), name=conv_name_base + '2a')(input_tensor)
+    x = Activation('relu')(x)
+    
+    for i in range(depth-1):
+        conv_name_base = 'res' + str(stage) + '-' + str(i) + 'a_branch'
+        x1 = Conv2D(filters, (3, 3), activation = 'relu', padding='same', kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), name=conv_name_base)(x)
+        conv_name_base = 'res' + str(stage) + '-' + str(i) + 'b_branch'
+        x2 = Conv2D(filters, (3, 3), padding='same', kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), name=conv_name_base)(x1)
+        x = Add()([x, x2])
+    
+    conv_name_base = 'res' + str(stage) + '-' + 'last_branch'
+    x = Conv2D(3, (3, 3), activation = 'relu', padding='same', kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), name=conv_name_base)(x)    
+    x = Add()([x, input_tensor])
+    return x
+
