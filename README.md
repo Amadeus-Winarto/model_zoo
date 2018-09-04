@@ -49,11 +49,28 @@ Features:
 ```python
 from InceptionV3 import inceptionv3
 inception_in = Input(shape = (299, 299, 3)
-inception = inceptionv3(inception_in, ratio = 1, num_A = 3, num_B = 4, num_C = 2, num_class = 1000, lr = 1e-5
+inception = inceptionv3(inception_in, ratio = 1, num_A = 3, num_B = 4, num_C = 2, num_class = 1000, lr = 1e-5)
 ```
 link: https://arxiv.org/pdf/1512.00567.pdf
 
 ## ResNet
+Features: Skip-Connection to avoid the Vanishing Gradient Problem. Works well for deep networks
+
+### ResNet V1
+```python
+from resnet import ResNet
+resnetv1_in = Input(shape = (299, 299, 3)
+resnetv1 = ResNet(resnetv1_in, depth = 50, num_classes = 1000, lr = 1e-5, model_type = 'v1')
+```
+link: 
+
+### ResNet V2
+```python
+from resnet import ResNet
+resnetv2_in = Input(shape = (299, 299, 3)
+resnetv2 = ResNet(resnetv2_in, depth = 50, num_classes = 1000, lr = 1e-5, model_type = 'v2')
+```
+link: 
 
 ## InceptionV4
 [To be Added]
