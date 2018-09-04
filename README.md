@@ -54,23 +54,30 @@ inception = inceptionv3(inception_in, ratio = 1, num_A = 3, num_B = 4, num_C = 2
 link: https://arxiv.org/pdf/1512.00567.pdf
 
 ## ResNet
-Features: Skip-Connection to avoid the Vanishing Gradient Problem. Works well for deep networks
+Features: 
+- Skip-Connections: This allows the model to learn identity mappings more easily, thus allowing models to go much deeper without suffering saturation and degradation of accuracy.
 
 ### ResNet V1
+- Bottleneck Layer: 3x (Conv2D --> Batch_Normalization --> Activation)
+- Activation for last layer placed after the skip-connection.
+
 ```python
 from resnet import ResNet
 resnetv1_in = Input(shape = (299, 299, 3)
 resnetv1 = ResNet(resnetv1_in, depth = 50, num_classes = 1000, lr = 1e-5, model_type = 'v1')
 ```
-link: 
+link: https://arxiv.org/pdf/1512.03385.pdf
 
 ### ResNet V2
+- Bottleneck Layer: 3x (Batch_Normalization --> Activation --> Conv2D)
+- No activation after skip-connection.
+
 ```python
 from resnet import ResNet
 resnetv2_in = Input(shape = (299, 299, 3)
 resnetv2 = ResNet(resnetv2_in, depth = 50, num_classes = 1000, lr = 1e-5, model_type = 'v2')
 ```
-link: 
+link: https://arxiv.org/pdf/1603.05027.pdf
 
 ## InceptionV4
 [To be Added]
