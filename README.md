@@ -42,6 +42,7 @@ Features (InceptionV2, not applied):
 
 ### InceptionV3:
 Features:
+- Features of InceptionV2
 - Further Factorization: By flattening the already-small 3x3 filters, efficiency of the model can be improved. This is achieved through asymmetric filters. For example, a 3x3 filter can be decomposed into a 1x3 filter followed by a 3x1 filter. This decreases the number of operations. 
 
 ```python
