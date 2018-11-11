@@ -213,8 +213,5 @@ def inceptionv3(img_input, ratio = 1, num_A = 3, num_B = 4, num_C = 2, num_class
     patch_output = Dense(num_class, activation = 'softmax', name='patch_output')(dropout1)
     
     Classifier = Model(img_input, patch_output)
-    rmsprop = RMSprop(lr=lr, rho=0.9, epsilon=None, decay=0.0, clipnorm = 2.)
-    adam = Adam(lr=lr, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False, clipnorm = 2.)
-    Classifier.compile(optimizer=adam, loss='categorical_crossentropy', metrics = ['accuracy'])
     print(Classifier.summary())
     return Classifier
