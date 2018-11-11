@@ -1,4 +1,4 @@
-# model_zoo
+# Model Zoo
 # Introduction:
 This is a side project where Python Scripts implementing different Convolutional Neural Network Architectures are pre-written to aid in future projects. Almost all of the scripts are not faithful replications of the proposed models; however, they are largely similar and (theoretically) should work similarly. There are also additional modifications made to some architectures to improve accuracy. Keras deep learning library is used.  
 
