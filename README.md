@@ -78,7 +78,8 @@ model = ResNet(resnetv2_in, depth = 50, num_classes = 1000, lr = 1e-5, model_typ
 ```
 link: https://arxiv.org/pdf/1603.05027.pdf
 
-## InceptionV4
+## Inception-v4 and Inception-ResNet 
+### InceptionV4
 - Improved Inceptionv3 architecture for faster training speed and better performance
 - Hyperparameters are updated
 
@@ -90,7 +91,7 @@ model = Inceptionv4(Inceptionv4_in, ratio = 1, num_A = 4, num_B = 7, num_C = 3, 
 link: https://arxiv.org/pdf/1602.07261.pdf
 
 
-## Inception-ResNet-v1 and Inception-ResNet-v2
+### Inception-ResNet-v1 and Inception-ResNet-v2
 - Addition of Skip-Connection inspired by ResNet-v1
 
 ```python
