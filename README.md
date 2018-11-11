@@ -2,7 +2,7 @@
 A list of Python Scripts that implement various model architectures in Keras
 
 # Introduction:
-This is a side project where scripts implementing different Convolutional Neural Network Architectures are pre-written to aid in future projects. Almost all of the scripts are not faithful replications of the proposed models; however, they are largely similar and (theoretically) should work similarly. There are also additional modifications made to some architectures to improve accuracy. 
+This is a side project where scripts implementing different Convolutional Neural Network Architectures are pre-written to aid in future projects. They are not faithful replications of the proposed architectures; they are supposed to aid in architectural design and serve as a starting point. There are also additional modifications made to some architectures to improve accuracy. 
 
 # How To Use:
 ## VGG:
