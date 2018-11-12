@@ -10,7 +10,7 @@ from keras.layers import Dense, Activation, Add
 from keras.layers import Conv2D, BatchNormalization, GlobalAveragePooling2D
 from keras.regularizers import l2
 
-def ResNet(model_input, depth, num_classes, lr, model_type = 'v2'): #ResNet Inspired Architecture
+def ResNet(model_input, depth, num_classes, model_type = 'v2'): #ResNet Inspired Architecture
     if model_type == 'v1':
         block_depth = 2
         filters = 64
@@ -121,42 +121,41 @@ class resnetv1:
 class resnetv2():
     def conv_block(input_tensor, kernel_size, filters, stage, block, strides = (2,2)): #https://arxiv.org/pdf/1603.05027.pdf
         filters1, filters2, filters3 = filters
-        conv_name_base = 'res' + str(stage) + block + '_branch'
-        bn_name_base = 'bn' + str(stage) + block + '_branch'
+        #conv_name_base = 'res' + str(stage) + block + '_branch'
+        #bn_name_base = 'bn' + str(stage) + block + '_branch'
     
-        x = BatchNormalization(axis=3, name=bn_name_base + '2a')(input_tensor)
+        x = BatchNormalization(axis=3)(input_tensor)
         x = Activation('relu')(x)
-        x = Conv2D(filters1, (1, 1), strides=strides, kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bias = False, name=conv_name_base + '2a')(x)
+        x = Conv2D(filters1, (1, 1), strides=strides, kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bias = False)(x)
         
-        x = BatchNormalization(axis=3, name=bn_name_base + '2b')(x)
+        x = BatchNormalization(axis=3)(x)
         x = Activation('relu')(x)
-        x = Conv2D(filters2, kernel_size, padding='same', kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bias = False, name=conv_name_base + '2b')(x)
+        x = Conv2D(filters2, kernel_size, padding='same', kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bias = False)(x)
         
-        x = BatchNormalization(axis=3, name=bn_name_base + '2c')(x)
+        x = BatchNormalization(axis=3)(x)
         x = Activation('relu')(x)
-        x = Conv2D(filters3, kernel_size, padding='same', kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bias = False, name=conv_name_base + '2c')(x)
+        x = Conv2D(filters3, kernel_size, padding='same', kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bias = False)(x)
     
-        shortcut = Conv2D(filters3, (1, 1), strides=strides, kernel_initializer='he_normal', kernel_regularizer = l2(1e-4),
-                                 name=conv_name_base + '1')(input_tensor)
+        shortcut = Conv2D(filters3, (1, 1), strides=strides, kernel_initializer='he_normal', kernel_regularizer = l2(1e-4))(input_tensor)
         x = Add()([x, shortcut])
         return x
 
     def identity_block(input_tensor, kernel_size, filters, stage, block): #https://arxiv.org/pdf/1603.05027.pdf
         filters1, filters2, filters3 = filters
-        conv_name_base = 'res' + str(stage) + block + '_branch'
-        bn_name_base = 'bn' + str(stage) + block + '_branch'
+        #conv_name_base = 'res' + str(stage) + block + '_branch'
+        #bn_name_base = 'bn' + str(stage) + block + '_branch'
     
-        x = BatchNormalization(axis=3, name=bn_name_base + '2a')(input_tensor)
+        x = BatchNormalization(axis=3)(input_tensor)
         x = Activation('relu')(x)
-        x = Conv2D(filters1, (1, 1), kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bias = False, name=conv_name_base + '2a')(x)
+        x = Conv2D(filters1, (1, 1), kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bias = False)(x)
         
-        x = BatchNormalization(axis=3, name=bn_name_base + '2b')(x)
+        x = BatchNormalization(axis=3)(x)
         x = Activation('relu')(x)
-        x = Conv2D(filters2, kernel_size, padding='same', kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bias = False, name=conv_name_base + '2b')(x)
+        x = Conv2D(filters2, kernel_size, padding='same', kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bias = False)(x)
         
-        x = BatchNormalization(axis=3, name=bn_name_base + '2c')(x)
+        x = BatchNormalization(axis=3)(x)
         x = Activation('relu')(x)
-        x = Conv2D(filters3, (1, 1), kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bias = False, name=conv_name_base + '2c')(x)
+        x = Conv2D(filters3, (1, 1), kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bias = False)(x)
         
         x = Add()([x, input_tensor])
         return x

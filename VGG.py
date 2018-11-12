@@ -13,7 +13,7 @@ from keras.optimizers import Adam
 from keras import backend as K
 from keras.preprocessing.image import ImageDataGenerator
 
-def VGG16(img_input, ratio, num_class, lr):
+def VGG16(img_input, ratio, num_classes):
     conv1_1 = Conv2D(64//ratio, (3,3), activation = 'relu', padding = 'same')(img_input)
     conv1_2 = Conv2D(64//ratio, (3,3), activation = 'relu', padding = 'same')(conv1_1)
     pool1 = MaxPooling2D((3,3), strides=(2,2))(conv1_2)
@@ -37,18 +37,16 @@ def VGG16(img_input, ratio, num_class, lr):
     conv5_3 = Conv2D(512//ratio, (3,3), activation = 'relu', padding = 'same')(conv5_2)
     pool5 = MaxPooling2D((3,3), strides = (2,2))(conv5_3)
     
-    fc6 = Dense(4096//ratio, activations = 'relu')(pool5)
+    fc6 = Dense(4096//ratio, activation = 'relu')(pool5)
     dropout1 = Dropout(0.5)(fc6)
-    fc7 = Dense(4096//ratio, activations = 'relu')(dropout1)
+    fc7 = Dense(4096//ratio, activation = 'relu')(dropout1)
     dropout2 = Dropout(0.5)(fc7)
-    fc8 = Dense(num_class, activations = 'softmax')(dropout2)
+    fc8 = Dense(num_classes, activation = 'softmax')(dropout2)
     
     model = Model(img_input, fc8)
-    model.compile(optimizer = Adam(lr=lr), loss='categorical_crossentropy')
-    
     return model
 
-def VGG19(img_input, ratio, num_class, lr):
+def VGG19(img_input, ratio, num_classes):
     conv1_1 = Conv2D(64//ratio, (3,3), activation = 'relu', padding = 'same')(img_input)
     conv1_2 = Conv2D(64//ratio, (3,3), activation = 'relu', padding = 'same')(conv1_1)
     pool1 = MaxPooling2D((2,2), strides=(2,2))(conv1_2)
@@ -75,18 +73,16 @@ def VGG19(img_input, ratio, num_class, lr):
     conv5_4 = Conv2D(512//ratio, (3,3), activation = 'relu', padding = 'same')(conv5_3)
     pool5 = MaxPooling2D((2,2), strides = (2,2))(conv5_4)
     
-    fc6 = Dense(4096//ratio, activations = 'relu')(pool5)
+    fc6 = Dense(4096//ratio, activation = 'relu')(pool5)
     dropout1 = Dropout(0.5)(fc6)
-    fc7 = Dense(4096//ratio, activations = 'relu')(dropout1)
+    fc7 = Dense(4096//ratio, activation = 'relu')(dropout1)
     dropout2 = Dropout(0.5)(fc7)
-    fc8 = Dense(num_class, activations = 'softmax')(dropout2)
+    fc8 = Dense(num_classes, activation = 'softmax')(dropout2)
     
     model = Model(img_input, fc8)
-    model.compile(optimizer = Adam(lr=lr), loss='categorical_crossentropy')
-    
     return model
 
-def VGG_modified(img_input, ratio, num_class, lr):
+def VGG_modified(img_input, ratio, num_classes):
     conv1_1 = Conv2D(64//ratio, (3,3), activation = 'relu', padding = 'same')(img_input)
     conv1_2 = Conv2D(64//ratio, (3,3), activation = 'relu', padding = 'same')(conv1_1)
     pool1 = MaxPooling2D((2,2), strides=(2,2))(conv1_2)
@@ -115,11 +111,9 @@ def VGG_modified(img_input, ratio, num_class, lr):
     
     pool = GlobalAveragePooling2D()(pool5)
     dropout2 = Dropout(0.7)(pool)
-    fc8 = Dense(num_class, activations = 'softmax')(dropout2)
+    fc8 = Dense(num_classes, activation = 'softmax')(dropout2)
     
     model = Model(img_input, fc8)
-    model.compile(optimizer = Adam(lr=lr), loss='categorical_crossentropy')
-    
     return model
 
 
