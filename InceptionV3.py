@@ -173,7 +173,7 @@ def moduleC(ratio, input_):
     
     return concatC1
 
-def inceptionv3(img_input, ratio = 1, num_A = 3, num_B = 4, num_C = 2, num_class = 1000, lr = 1e-5):
+def inceptionv3(img_input, ratio = 1, num_A = 3, num_B = 4, num_C = 2, num_class = 1000, dropout = 0.5):
     conv1_1 = Conv2D(32//ratio, (3,3), strides = (2,2), use_bias = False, padding='valid', name='conv1_1', kernel_regularizer=l2(0.02))(img_input)    
     conv1_1 = BatchNormalization(scale = False)(conv1_1)
     conv1_1 = Activation('relu')(conv1_1)
@@ -209,9 +209,8 @@ def inceptionv3(img_input, ratio = 1, num_A = 3, num_B = 4, num_C = 2, num_class
     
     #End
     pool = GlobalAveragePooling2D()(x)
-    dropout1 = Dropout(0.5)(pool)
+    dropout1 = Dropout(dropout)(pool)
     patch_output = Dense(num_class, activation = 'softmax', name='patch_output')(dropout1)
     
     Classifier = Model(img_input, patch_output)
-    print(Classifier.summary())
     return Classifier
