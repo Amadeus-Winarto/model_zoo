@@ -48,7 +48,7 @@ Features:
 ```python
 from InceptionV3 import inceptionv3
 inception_in = Input(shape = (299, 299, 3))
-model = inceptionv3(inception_in, ratio = 1, num_A = 3, num_B = 4, num_C = 2, num_class = 1000, lr = 1e-5)
+model = inceptionv3(inception_in, ratio = 1, num_A = 3, num_B = 4, num_C = 2, num_class = 1000, dropout = 0.5)
 ```
 link: https://arxiv.org/pdf/1512.00567.pdf
 
@@ -63,7 +63,7 @@ Features:
 ```python
 from resnet import ResNet
 resnetv1_in = Input(shape = (299, 299, 3))
-model = ResNet(resnetv1_in, depth = 50, num_classes = 1000, lr = 1e-5, model_type = 'v1')
+model = ResNet(resnetv1_in, depth = 50, num_classes = 1000, model_type = 'v1')
 ```
 link: https://arxiv.org/pdf/1512.03385.pdf
 
@@ -73,7 +73,7 @@ link: https://arxiv.org/pdf/1512.03385.pdf
 ```python
 from resnet import ResNet
 resnetv2_in = Input(shape = (299, 299, 3))
-model = ResNet(resnetv2_in, depth = 50, num_classes = 1000, lr = 1e-5, model_type = 'v2')
+model = ResNet(resnetv2_in, depth = 50, num_classes = 1000, model_type = 'v2')
 ```
 link: https://arxiv.org/pdf/1603.05027.pdf
 
@@ -85,7 +85,7 @@ link: https://arxiv.org/pdf/1603.05027.pdf
 ```python
 from InceptionV4 import Inceptionv4
 Inceptionv4_in = Input(shape = (299, 299, 3))
-model = Inceptionv4(Inceptionv4_in, ratio = 1, num_A = 4, num_B = 7, num_C = 3, num_classes = 1000, lr = 1e-5, dropout = 0.8)
+model = Inceptionv4(Inceptionv4_in, ratio = 1, num_A = 4, num_B = 7, num_C = 3, num_classes = 1000, dropout = 0.8)
 ```
 link: https://arxiv.org/pdf/1602.07261.pdf
 
@@ -96,11 +96,11 @@ link: https://arxiv.org/pdf/1602.07261.pdf
 ```python
 from Inception-ResNet import Inception_ResNet
 Inception_ResNet_in = Input(shape = (299, 299, 3))
-model = Inception_ResNet(Inception_ResNet_in, ratio = 1, num_A = 5, num_B = 10, num_C = 5, num_classes = 1000, lr = 1e-5, dropout = 0.8, model_type = 'v2')
+model = Inception_ResNet(Inception_ResNet_in, ratio = 1, num_A = 5, num_B = 10, num_C = 5, num_classes = 1000, dropout = 0.8, model_type = 'v2')
 
 '''
 or v1:
-model = Inception_ResNet(Inception_ResNet_in, ratio = 1, num_A = 5, num_B = 10, num_C = 5, num_classes = 1000, lr = 1e-5, dropout = 0.8, model_type = 'v1')
+model = Inception_ResNet(Inception_ResNet_in, ratio = 1, num_A = 5, num_B = 10, num_C = 5, num_classes = 1000, dropout = 0.8, model_type = 'v1')
 '''
 ```
 
