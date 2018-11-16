@@ -15,8 +15,8 @@ def ResNet(model_input, depth, num_classes, model_type = 'v2'): #ResNet Inspired
         block_depth = 2
         filters = 64
         
-        x = Conv2D(32, (3, 3), padding = 'same', kernel_initializer='he_normal', name='conv1')(model_input)
-        x = BatchNormalization(axis=3, name='bn_conv1')(x)
+        x = Conv2D(64, (3, 3), strides = 2, padding = 'valid', kernel_initializer='he_normal')(model_input)
+        x = BatchNormalization(axis=3)(x)
         x = Activation('relu')(x)
         
         for i in range(depth):
@@ -35,6 +35,9 @@ def ResNet(model_input, depth, num_classes, model_type = 'v2'): #ResNet Inspired
             
             if filters < 512:
                 filters = filters * 2
+            x = Conv2D(filters, (3, 3), padding = 'valid', kernel_initializer='he_normal')(x)
+            x = BatchNormalization(axis=3)(x)
+            x = Activation('relu')(x)
     
         x = GlobalAveragePooling2D(name='avg_pool')(x)
         x = Dense(num_classes, activation='softmax', name='fc')(x)
@@ -46,8 +49,8 @@ def ResNet(model_input, depth, num_classes, model_type = 'v2'): #ResNet Inspired
         block_depth = 2
         filters = 64
         
-        x = Conv2D(32, (3, 3), padding = 'same', kernel_initializer='he_normal', name='conv1')(model_input)
-        x = BatchNormalization(axis=3, name='bn_conv1')(x)
+        x = Conv2D(64, (3, 3), strides = 2, padding = 'valid', kernel_initializer='he_normal')(model_input)
+        x = BatchNormalization(axis=3)(x)
         x = Activation('relu')(x)
         
         for i in range(depth):
@@ -66,6 +69,9 @@ def ResNet(model_input, depth, num_classes, model_type = 'v2'): #ResNet Inspired
             
             if filters < 512:
                 filters = filters * 2
+            x = Conv2D(filters, (3, 3), strides = 2, padding = 'valid', kernel_initializer='he_normal')(x)
+            x = BatchNormalization(axis=3)(x)
+            x = Activation('relu')(x)
 
         x = GlobalAveragePooling2D(name='avg_pool')(x)
         x = Dense(num_classes, activation='softmax', name='fc')(x)
