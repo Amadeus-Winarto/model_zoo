@@ -46,9 +46,9 @@ Features:
 - Further Factorization: By flattening the already-small 3x3 filters, efficiency of the model can be improved. This is achieved through asymmetric filters. For example, a 3x3 filter can be decomposed into a 1x3 filter followed by a 3x1 filter. This decreases the number of operations. 
 
 ```python
-from InceptionV3 import inceptionv3
+from InceptionV3 import Inceptionv3
 inception_in = Input(shape = (299, 299, 3))
-model = inceptionv3(inception_in, ratio = 1, num_A = 3, num_B = 4, num_C = 2, num_class = 1000, dropout = 0.5)
+model = Inceptionv3(inception_in, ratio = 1, num_A = 3, num_B = 4, num_C = 2, num_class = 1000, dropout = 0.5)
 ```
 link: https://arxiv.org/pdf/1512.00567.pdf
 
