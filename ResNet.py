@@ -1,167 +1,151 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Sep  4 11:27:28 2018
+Created on Mon Nov 19 10:21:08 2018
 
-@author: valaxw
+@author: amadeusaw
 """
 from keras.models import Model
-from keras.layers import Dense, Activation, Add
-from keras.layers import Conv2D, BatchNormalization, GlobalAveragePooling2D
+from keras.layers import Conv2D, Dense, Activation, BatchNormalization, Concatenate, Dropout, Add
+from keras.layers import AveragePooling2D, GlobalAveragePooling2D, MaxPooling2D
 from keras.regularizers import l2
 
-def ResNet(model_input, depth, num_classes, model_type = 'v2'): #ResNet Inspired Architecture
-    if model_type == 'v1':
-        block_depth = 2
-        filters = 64
-        
-        x = Conv2D(64, (3, 3), strides = 2, padding = 'valid', kernel_initializer='he_normal')(model_input)
-        x = BatchNormalization(axis=3)(x)
-        x = Activation('relu')(x)
-        
-        for i in range(depth):
-            block_name = 'a'
-            filter_list = [filters, filters, filters *4]
-            
-            x = resnetv1.conv_block(x, 3, filter_list , stage = block_depth, block = block_name, strides = (1, 1))
-            
-            if block_depth < 6:
-                block_depth += 1
-                
-            for i in range(block_depth-1):
-                block_name = chr(ord(block_name)+1)
-                
-                x = resnetv1.identity_block(x, 3, filter_list , stage = block_depth, block = block_name)
-            
-            if filters < 512:
-                filters = filters * 2
-            x = Conv2D(filters, (3, 3), padding = 'valid', kernel_initializer='he_normal')(x)
-            x = BatchNormalization(axis=3)(x)
-            x = Activation('relu')(x)
+def ResNetv1(img_input, ratio = 1, num_A = 3, num_B = 4, num_C = 6, num_D = 3, num_classes = 1000, dropout = 0.5):
+    conv1 = Conv2D(64, (7, 7), padding = 'same', strides = 2)(img_input)
+    pool1 = MaxPooling2D((3,3), strides=(2, 2), padding = 'same')(conv1)
     
-        x = GlobalAveragePooling2D(name='avg_pool')(x)
-        x = Dense(num_classes, activation='softmax', name='fc')(x)
+    filters = (64//ratio, 64// ratio, 256//ratio)
+    x = resnetv1.conv_block(pool1, filters = filters, strides = 1)
+    for i in range(num_A - 1):
+        x = resnetv1.identity_block(x, filters = filters)
         
-        model = Model(model_input, x)        
-        return model
+    filters = tuple([2 * j for j in filters])
+    x = resnetv1.conv_block(x, filters = filters)
+    for i in range(num_B - 1):
+        x = resnetv1.identity_block(x, filters = filters)
     
-    elif model_type == 'v2':
-        block_depth = 2
-        filters = 64
-        
-        x = Conv2D(64, (3, 3), strides = 2, padding = 'valid', kernel_initializer='he_normal')(model_input)
-        x = BatchNormalization(axis=3)(x)
-        x = Activation('relu')(x)
-        
-        for i in range(depth):
-            block_name = 'a'                
-            filter_list = [filters, filters, filters *4]
-            
-            x = resnetv2.conv_block(x, 3, filter_list , stage = block_depth, block = block_name, strides = (1, 1))
-            
-            if block_depth < 6:
-                block_depth += 1
-                
-            for i in range(block_depth-1):
-                block_name = chr(ord(block_name)+1)
-                
-                x = resnetv2.identity_block(x, 3, filter_list , stage = block_depth, block = block_name)
-            
-            if filters < 512:
-                filters = filters * 2
-            x = Conv2D(filters, (3, 3), strides = 2, padding = 'valid', kernel_initializer='he_normal')(x)
-            x = BatchNormalization(axis=3)(x)
-            x = Activation('relu')(x)
+    filters = tuple([2 * j for j in filters])
+    x = resnetv1.conv_block(x, filters = filters)
+    for i in range(num_C - 1):
+        x = resnetv1.identity_block(x, filters = filters)
+    
+    filters = tuple([2 * j for j in filters])
+    x = resnetv1.conv_block(x, filters = filters)
+    for i in range(num_D - 1):
+        x = resnetv1.identity_block(x, filters = filters)
+    
+    x = GlobalAveragePooling2D(name='avg_pool')(x)
+    x = Dropout(dropout)(x)
+    x = Dense(num_classes, activation='softmax', name='fc')(x)
+    
+    model = Model(img_input, x)        
+    return model
 
-        x = GlobalAveragePooling2D(name='avg_pool')(x)
-        x = Dense(num_classes, activation='softmax', name='fc')(x)
+def ResNetv2(img_input, ratio = 1, num_A = 3, num_B = 4, num_C = 6, num_D = 3, num_classes = 1000, dropout = 0.5):
+    conv1 = Conv2D(64, (7, 7), padding = 'same', strides = 2)(img_input)
+    pool1 = MaxPooling2D((3,3), strides=(2, 2), padding = 'same')(conv1)
+    
+    filters = (64//ratio, 64// ratio, 256//ratio)
+    x = resnetv2.conv_block(pool1, filters = filters, strides = 1)
+    for i in range(num_A - 1):
+        x = resnetv2.identity_block(x, filters = filters)
         
-        model = Model(model_input, x)        
-        return model
+    filters = tuple([2 * j for j in filters])
+    x = resnetv2.conv_block(x, filters = filters)
+    for i in range(num_B - 1):
+        x = resnetv2.identity_block(x, filters = filters)
+    
+    filters = tuple([2 * j for j in filters])
+    x = resnetv2.conv_block(x, filters = filters)
+    for i in range(num_C - 1):
+        x = resnetv2.identity_block(x, filters = filters)
+    
+    filters = tuple([2 * j for j in filters])
+    x = resnetv2.conv_block(x, filters = filters)
+    for i in range(num_D - 1):
+        x = resnetv2.identity_block(x, filters = filters)
+    
+    x = GlobalAveragePooling2D(name='avg_pool')(x)
+    x = Dropout(dropout)(x)
+    x = Dense(num_classes, activation='softmax', name='fc')(x)
+    
+    model = Model(img_input, x)        
+    return model
+    
+class layers:
+    def convV1(layer_input, filter_num = 32, filter_size = (3, 3), 
+               strides = 1, use_bias = False, padding = 'same', 
+               kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), activation = 'relu'):
+        
+        
+        x = Conv2D(filter_num, filter_size, strides = strides, 
+                   padding = padding,
+                   kernel_initializer = kernel_initializer,
+                   kernel_regularizer = kernel_regularizer,
+                   use_bias = use_bias)(layer_input)
+        x = BatchNormalization(scale = False)(x)
+        x = Activation(activation)(x)
+        
+        return x
+    
+    def convV2(layer_input, filter_num = 32, filter_size = (3, 3), 
+               strides = 1, use_bias = False, padding = 'same', 
+               kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), activation = 'relu'):
+        
+        x = BatchNormalization(scale = False)(layer_input)
+        x = Activation(activation)(x)
+        x = Conv2D(filter_num, filter_size, strides = strides, 
+                   padding = padding,
+                   kernel_initializer = kernel_initializer,
+                   kernel_regularizer = kernel_regularizer,
+                   use_bias = use_bias)(x)
+        return x
 
 class resnetv1:
-    def conv_block(input_tensor, kernel_size, filters, stage, block, strides = (2,2)): 
-            filters1, filters2, filters3 = filters
-            conv_name_base = 'res' + str(stage) + block + '_branch'
-            bn_name_base = 'bn' + str(stage) + block + '_branch'
+    def conv_block(block_input, filters, filter_size = (3, 3), 
+                   strides = 2, kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), activation = 'relu'):
         
-            x = Conv2D(filters1, (1, 1), strides = strides, kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bias = False, name=conv_name_base + '2a')(input_tensor)
-            x = BatchNormalization(axis=3, name=bn_name_base + '2a')(x)
-            x = Activation('relu')(x)
-        
-            x = Conv2D(filters2, kernel_size, padding='same', kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bias = False, name=conv_name_base + '2b')(x)
-            x = BatchNormalization(axis=3, name=bn_name_base + '2b')(x)
-            x = Activation('relu')(x)
-        
-            x = Conv2D(filters3, (1, 1), kernel_initializer='he_normal', use_bias = False, kernel_regularizer = l2(1e-4), name=conv_name_base + '2c')(x)
-            x = BatchNormalization(axis=3, name=bn_name_base + '2c')(x)
-        
-            shortcut = Conv2D(filters3, (1, 1), strides=strides, kernel_initializer='he_normal', kernel_regularizer = l2(1e-4),
-                                     name=conv_name_base + '1')(input_tensor)
-            shortcut = BatchNormalization(axis=3, name=bn_name_base + '1')(shortcut)
-        
-            x = Add()([x, shortcut])
-            x = Activation('relu')(x)
-            return x
-        
-    def identity_block(input_tensor, kernel_size, filters, stage, block):
         filters1, filters2, filters3 = filters
-        conv_name_base = 'res' + str(stage) + block + '_branch'
-        bn_name_base = 'bn' + str(stage) + block + '_branch'
+        x = layers.convV1(block_input, filter_size = (1, 1), filter_num = filters1, strides = strides, kernel_initializer = kernel_initializer, kernel_regularizer = kernel_regularizer, activation = activation)
+        x = layers.convV1(x, filter_size = filter_size, filter_num = filters2, kernel_initializer = kernel_initializer, kernel_regularizer = kernel_regularizer, activation = activation)
+        x = layers.convV1(x, filter_size = filter_size, filter_num = filters3, kernel_initializer = kernel_initializer, kernel_regularizer = kernel_regularizer, activation = activation)
     
-        x = Conv2D(filters1, (1, 1), kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bias = False, name=conv_name_base + '2a')(input_tensor)
-        x = BatchNormalization(axis=3, name=bn_name_base + '2a')(x)
-        x = Activation('relu')(x)
-    
-        x = Conv2D(filters2, kernel_size, padding='same', kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bias = False, name=conv_name_base + '2b')(x)
-        x = BatchNormalization(axis=3, name=bn_name_base + '2b')(x)
-        x = Activation('relu')(x)
-    
-        x = Conv2D(filters3, (1, 1), kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bias = False, name=conv_name_base + '2c')(x)
-        x = BatchNormalization(axis=3, name=bn_name_base + '2c')(x)
-    
-        x = Add()([x, input_tensor])
-        x = Activation('relu')(x)
-        return x
-
-class resnetv2():
-    def conv_block(input_tensor, kernel_size, filters, stage, block, strides = (2,2)): #https://arxiv.org/pdf/1603.05027.pdf
-        filters1, filters2, filters3 = filters
-        #conv_name_base = 'res' + str(stage) + block + '_branch'
-        #bn_name_base = 'bn' + str(stage) + block + '_branch'
-    
-        x = BatchNormalization(axis=3)(input_tensor)
-        x = Activation('relu')(x)
-        x = Conv2D(filters1, (1, 1), strides=strides, kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bias = False)(x)
-        
-        x = BatchNormalization(axis=3)(x)
-        x = Activation('relu')(x)
-        x = Conv2D(filters2, kernel_size, padding='same', kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bias = False)(x)
-        
-        x = BatchNormalization(axis=3)(x)
-        x = Activation('relu')(x)
-        x = Conv2D(filters3, kernel_size, padding='same', kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bias = False)(x)
-    
-        shortcut = Conv2D(filters3, (1, 1), strides=strides, kernel_initializer='he_normal', kernel_regularizer = l2(1e-4))(input_tensor)
+        shortcut = Conv2D(filters3, (1, 1), strides = strides, kernel_initializer='he_normal', kernel_regularizer = kernel_regularizer)(block_input)
         x = Add()([x, shortcut])
         return x
-
-    def identity_block(input_tensor, kernel_size, filters, stage, block): #https://arxiv.org/pdf/1603.05027.pdf
-        filters1, filters2, filters3 = filters
-        #conv_name_base = 'res' + str(stage) + block + '_branch'
-        #bn_name_base = 'bn' + str(stage) + block + '_branch'
     
-        x = BatchNormalization(axis=3)(input_tensor)
-        x = Activation('relu')(x)
-        x = Conv2D(filters1, (1, 1), kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bias = False)(x)
+    def identity_block(block_input, filters, filter_size = (3, 3), 
+                       kernel_initializer = 'he_normal', kernel_regularizer = l2(1e-4), activation = 'relu'): #https://arxiv.org/pdf/1603.05027.pdf
         
-        x = BatchNormalization(axis=3)(x)
-        x = Activation('relu')(x)
-        x = Conv2D(filters2, kernel_size, padding='same', kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bias = False)(x)
+        filters1, filters2, filters3 = filters        
+        x = layers.convV1(block_input, filter_size = (1, 1), filter_num = filters1, kernel_initializer = kernel_initializer, kernel_regularizer = kernel_regularizer, activation = activation)
+        x = layers.convV1(x, filter_size = filter_size, filter_num = filters2, kernel_initializer = kernel_initializer, kernel_regularizer = kernel_regularizer, activation = activation)
+        x = layers.convV1(x, filter_size = filter_size, filter_num = filters3, kernel_initializer = kernel_initializer, kernel_regularizer = kernel_regularizer, activation = activation)
         
-        x = BatchNormalization(axis=3)(x)
-        x = Activation('relu')(x)
-        x = Conv2D(filters3, (1, 1), kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bias = False)(x)
-        
-        x = Add()([x, input_tensor])
+        x = Add()([x, block_input])
         return x
+    
+class resnetv2:
+    def conv_block(block_input, filters, filter_size = (3, 3), 
+                   strides = 2, kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), activation = 'relu'):
+        
+        filters1, filters2, filters3 = filters
+        x = layers.convV2(block_input, filter_size = (1, 1), filter_num = filters1, strides = strides, kernel_initializer = kernel_initializer, kernel_regularizer = kernel_regularizer, activation = activation)
+        x = layers.convV2(x, filter_size = filter_size, filter_num = filters2, kernel_initializer = kernel_initializer, kernel_regularizer = kernel_regularizer, activation = activation)
+        x = layers.convV2(x, filter_size = filter_size, filter_num = filters3, kernel_initializer = kernel_initializer, kernel_regularizer = kernel_regularizer, activation = activation)
+    
+        shortcut = Conv2D(filters3, (1, 1), strides = strides, kernel_initializer='he_normal', kernel_regularizer = kernel_regularizer)(block_input)
+        x = Add()([x, shortcut])
+        return x
+    
+    def identity_block(block_input, filters, filter_size = (3, 3), 
+                       kernel_initializer = 'he_normal', kernel_regularizer = l2(1e-4), activation = 'relu'): #https://arxiv.org/pdf/1603.05027.pdf
+        
+        filters1, filters2, filters3 = filters        
+        x = layers.convV2(block_input, filter_size = (1, 1), filter_num = filters1, kernel_initializer = kernel_initializer, kernel_regularizer = kernel_regularizer, activation = activation)
+        x = layers.convV2(x, filter_size = filter_size, filter_num = filters2, kernel_initializer = kernel_initializer, kernel_regularizer = kernel_regularizer, activation = activation)
+        x = layers.convV2(x, filter_size = filter_size, filter_num = filters3, kernel_initializer = kernel_initializer, kernel_regularizer = kernel_regularizer, activation = activation)
+        
+        x = Add()([x, block_input])
+        return x
+
