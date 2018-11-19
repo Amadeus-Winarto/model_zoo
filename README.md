@@ -61,9 +61,9 @@ Features:
 - Activation for last layer placed after the skip-connection.
 
 ```python
-from resnet import ResNet
+from ResNet import ResNetv1 
 resnetv1_in = Input(shape = (299, 299, 3))
-model = ResNet(resnetv1_in, depth = 50, num_classes = 1000, model_type = 'v1')
+model = ResNetv1(resnetv1_in, ratio = ratio, num_A = 3, num_B = 4, num_C = 6, num_D = 3, num_classes = 1000, dropout = 0.5)
 ```
 link: https://arxiv.org/pdf/1512.03385.pdf
 
@@ -71,9 +71,9 @@ link: https://arxiv.org/pdf/1512.03385.pdf
 - Bottleneck Layer: 3x (Batch_Normalization --> Activation --> Conv2D)
 - No activation after skip-connection.
 ```python
-from resnet import ResNet
+from ResNet import ResNetv2
 resnetv2_in = Input(shape = (299, 299, 3))
-model = ResNet(resnetv2_in, depth = 50, num_classes = 1000, model_type = 'v2')
+model = ResNetv2(resnetv2_in, ratio = ratio, num_A = 3, num_B = 4, num_C = 6, num_D = 3, num_classes = 1000, dropout = 0.5)
 ```
 link: https://arxiv.org/pdf/1603.05027.pdf
 
