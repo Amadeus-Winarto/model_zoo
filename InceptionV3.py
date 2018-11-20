@@ -36,7 +36,7 @@ def Inceptionv3(img_input, ratio = 1, num_A = 3, num_B = 4, num_C = 2, num_class
     conv1_5 = Activation('relu')(conv1_5)
     x = MaxPooling2D((3,3), strides = (2,2), name = 'pool2')(conv1_5)
     
-    for i in range (num_A):
+    for i in range (num_A): 
         x = inceptionv4.moduleA(ratio, x)
         
     x = inceptionv4.resizeA(ratio, x)

@@ -10,7 +10,7 @@ from keras.layers import Conv2D, Dense, Activation, BatchNormalization, Concaten
 from keras.layers import AveragePooling2D, GlobalAveragePooling2D, MaxPooling2D
 from keras.regularizers import l2
 
-def Inceptionv4(model_input, ratio = 1, num_A = 4, num_B = 7, num_C = 3, num_classes = 1000, lr = 1e-5, dropout = 0.8):
+def Inceptionv4(model_input, ratio = 1, num_A = 4, num_B = 7, num_C = 3, num_classes = 1000, dropout = 0.8):
     stem = inceptionv4.Stem(model_input, ratio)
     moduleA = inceptionv4.ModuleA(stem, ratio)
     for i in range(num_A -1):
@@ -36,14 +36,12 @@ def Inceptionv4(model_input, ratio = 1, num_A = 4, num_B = 7, num_C = 3, num_cla
     return model
 
 class layers:
-    def conv(layer_input, filter_num = 32, filter_size = (3, 3), strides = 1, use_bias = False, padding = 'valid', kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bn = 'True', activation = 'relu'):
-        convx = Conv2D(filter_num, filter_size, strides, use_bias, padding, kernel_initializer, kernel_regularizer)(layer_input)
+    def conv(layer_input, filter_num = 32, filter_size = (3, 3), strides = 1, use_bias = False, padding = 'same', kernel_initializer='he_normal', kernel_regularizer = l2(1e-4), use_bn = 'True', activation = 'relu'):
+        convx = Conv2D(filters = filter_num, kernel_size = filter_size, strides = strides, use_bias = use_bias, padding = padding, kernel_initializer = kernel_initializer, kernel_regularizer = kernel_regularizer)(layer_input)
         if use_bn == 'True':
             convx = BatchNormalization(scale=False)(convx)
         convx = Activation(activation)(convx)
-        
         return convx
-    
     
 class inceptionv4:
     def Stem(img_input, ratio):
@@ -86,7 +84,7 @@ class inceptionv4:
         conv4_1 = Conv2D(192// ratio, (3, 3), strides = 1, use_bias = False, padding = 'valid', kernel_initializer='he_normal', kernel_regularizer = l2(1e-4))(concat3)
         conv4_1 = BatchNormalization(scale=False)(conv4_1)
         conv4_1 = Activation('relu')(conv4_1)
-        pool4 = MaxPooling2D(pool_size=(3, 3), strides = (2,2), padding='valid')(concat3)
+        pool4 = MaxPooling2D(pool_size=(3, 3), strides = (1,1), padding='valid')(concat3)
         concat4 = Concatenate()([conv4_1, pool4])
         
         return concat4
